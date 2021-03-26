@@ -14,23 +14,6 @@ Adds [FluentValidation](https://fluentvalidation.net/) support to [EntityFramewo
 
 Support is available via a [Tidelift Subscription](https://tidelift.com/subscription/pkg/nuget-effluentvalidation?utm_source=nuget-effluentvalidation&utm_medium=referral&utm_campaign=enterprise).
 
-<!-- toc -->
-## Contents
-
-  * [Usage](#usage)
-    * [Define Validators](#define-validators)
-    * [Context](#context)
-    * [ValidationFinder](#validationfinder)
-  * [DbContextValidator](#dbcontextvalidator)
-    * [TryValidate](#tryvalidate)
-    * [Validate](#validate)
-    * [ValidatorTypeCache](#validatortypecache)
-    * [ValidatorFactory](#validatorfactory)
-  * [DbContext](#dbcontext)
-    * [ValidatingDbContext](#validatingdbcontext)
-    * [DbContext as a base](#dbcontext-as-a-base)
-  * [Security contact information](#security-contact-information)<!-- endToc -->
-
 
 ## NuGet package
 
