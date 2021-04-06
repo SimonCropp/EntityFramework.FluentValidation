@@ -11,15 +11,15 @@ static class AsyncValidatorChecker
         if (validator is IEnumerable<IValidationRule> rules)
         {
             context.RootContextData["__FV_IsAsyncExecution"] = true;
-            return rules.Any(validationRule => IsAsync(validationRule, context));
+            return rules.Any(IsAsync);
         }
 
         return false;
     }
 
-    static bool IsAsync(IValidationRule validationRule, IValidationContext context)
+    static bool IsAsync(IValidationRule validationRule)
     {
-        return validationRule.Validators.Any(x => x.ShouldValidateAsynchronously(context));
+        return validationRule.Components.Any(x => x.HasAsyncCondition);
     }
 
     public static Task<ValidationResult> ValidateEx(this IValidator validator, IValidationContext validationContext)
