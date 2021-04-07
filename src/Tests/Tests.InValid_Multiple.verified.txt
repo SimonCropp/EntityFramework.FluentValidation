@@ -4,11 +4,9 @@
 Validation failed
   * Employee
    * Content: 'Content' must not be empty. (Validator: Employee+Validator)
-   * Content: 'Content' must not be empty. (Validator: IProvideId+Validator)
 
   * Company
    * Content: 'Content' must not be empty. (Validator: Company+Validator)
-   * Content: 'Content' must not be empty. (Validator: IProvideId+Validator)
 
 ,
   Errors: [
@@ -24,19 +22,6 @@ Validation failed
       Failures: [
         {
           ValidatorType: Employee.Validator,
-          Failure: {
-            PropertyName: Content,
-            ErrorMessage: 'Content' must not be empty.,
-            AttemptedValue: ,
-            ErrorCode: NotEmptyValidator,
-            FormattedMessagePlaceholderValues: {
-              PropertyName: Content,
-              PropertyValue: 
-            }
-          }
-        },
-        {
-          ValidatorType: IProvideId.Validator,
           Failure: {
             PropertyName: Content,
             ErrorMessage: 'Content' must not be empty.,
@@ -63,19 +48,6 @@ Validation failed
       Failures: [
         {
           ValidatorType: Company.Validator,
-          Failure: {
-            PropertyName: Content,
-            ErrorMessage: 'Content' must not be empty.,
-            AttemptedValue: ,
-            ErrorCode: NotEmptyValidator,
-            FormattedMessagePlaceholderValues: {
-              PropertyName: Content,
-              PropertyValue: 
-            }
-          }
-        },
-        {
-          ValidatorType: IProvideId.Validator,
           Failure: {
             PropertyName: Content,
             ErrorMessage: 'Content' must not be empty.,

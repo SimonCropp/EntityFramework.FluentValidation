@@ -1,6 +1,6 @@
 {
   Type: EntityValidationException,
-  Message:
+  Message: 
 Validation failed
   * Employee
    * Content: 'Content' must not be empty. (Validator: Employee+Validator)
@@ -9,7 +9,7 @@ Validation failed
   Errors: [
     {
       Entity: {
-        Content:
+        Content: 
       },
       EntityType: Employee,
       Failures: [
@@ -22,14 +22,14 @@ Validation failed
             ErrorCode: NotEmptyValidator,
             FormattedMessagePlaceholderValues: {
               PropertyName: Content,
-              PropertyValue:
+              PropertyValue: 
             }
           }
         }
       ]
     }
   ],
-  StackTrace:
+  StackTrace: 
 at EfFluentValidation.DbContextValidator.Validate(DbContext dbContext, Func`2 validatorFactory)
 at EfFluentValidation.ValidatingDbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
 at Xunit.Assert.RecordExceptionAsync(Func`1 testCode)

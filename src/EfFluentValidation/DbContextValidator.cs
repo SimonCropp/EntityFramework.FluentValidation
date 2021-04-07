@@ -47,12 +47,12 @@ namespace EfFluentValidation
             {
                 List<TypeValidationFailure> validationFailures = new();
                 var clrType = entry.Metadata.ClrType;
-                var validationContext = BuildValidationContext(dbContext, entry);
                 var cachedValidators = validatorFactory(clrType);
                 if (cachedValidators.HasAsyncCondition)
                 {
                     foreach (var validator in cachedValidators.Validators)
                     {
+                        var validationContext = BuildValidationContext(dbContext, entry);
                         var result = await validator.ValidateAsync(validationContext);
                         AddFailures(validationFailures, result.Errors, validator);
                     }
@@ -61,6 +61,7 @@ namespace EfFluentValidation
                 {
                     foreach (var validator in cachedValidators.Validators)
                     {
+                        var validationContext = BuildValidationContext(dbContext, entry);
                         // ReSharper disable once MethodHasAsyncOverload
                         var result = validator.Validate(validationContext);
                         AddFailures(validationFailures, result.Errors, validator);
@@ -77,13 +78,13 @@ namespace EfFluentValidation
             {
                 List<TypeValidationFailure> validationFailures = new();
                 var clrType = entry.Metadata.ClrType;
-                var validationContext = BuildValidationContext(dbContext, entry);
                 var changedProperties = entry.ChangedProperties().ToList();
                 var cachedValidators = validatorFactory(clrType);
                 if (cachedValidators.HasAsyncCondition)
                 {
                     foreach (var validator in cachedValidators.Validators)
                     {
+                        var validationContext = BuildValidationContext(dbContext, entry);
                         var result = await validator.ValidateAsync(validationContext);
                         var errors = result.Errors.Where(x => changedProperties.Contains(x.PropertyName));
 
@@ -94,6 +95,7 @@ namespace EfFluentValidation
                 {
                     foreach (var validator in cachedValidators.Validators)
                     {
+                        var validationContext = BuildValidationContext(dbContext, entry);
                         // ReSharper disable once MethodHasAsyncOverload
                         var result = validator.Validate(validationContext);
                         var errors = result.Errors.Where(x => changedProperties.Contains(x.PropertyName));
@@ -111,9 +113,7 @@ namespace EfFluentValidation
 
         static IValidationContext BuildValidationContext(DbContext dbContext, EntityEntry entry)
         {
-            //TODO: cache
-            var validationContextType = typeof(ValidationContext<>).MakeGenericType(entry.Metadata.ClrType);
-            var validationContext = (IValidationContext) Activator.CreateInstance(validationContextType, entry.Entity);
+            var validationContext = new ValidationContext<object>(entry.Entity);
             validationContext.RootContextData.Add("EfContext", new EfContext(dbContext, entry));
             return validationContext;
         }
