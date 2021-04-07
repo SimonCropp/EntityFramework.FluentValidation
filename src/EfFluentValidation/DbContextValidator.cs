@@ -32,11 +32,11 @@ namespace EfFluentValidation
         {
             Guard.AgainstNull(dbContext, nameof(dbContext));
             Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
-            var entityFailures = await InnVerify(dbContext, validatorFactory).ToAsyncList();
+            var entityFailures = await InnerVerify(dbContext, validatorFactory).ToAsyncList();
             return (!entityFailures.Any(), entityFailures);
         }
 
-        static async IAsyncEnumerable<EntityValidationFailure> InnVerify(DbContext dbContext, Func<Type, IEnumerable<IValidator>> validatorFactory)
+        static async IAsyncEnumerable<EntityValidationFailure> InnerVerify(DbContext dbContext, Func<Type, IEnumerable<IValidator>> validatorFactory)
         {
             foreach (var entry in dbContext.AddedEntries())
             {
