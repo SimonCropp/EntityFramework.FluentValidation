@@ -1,5 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using EfFluentValidation;
 using EfLocalDb;
 using FluentValidation;
 
@@ -13,7 +14,7 @@ public static class DbContextBuilder
             buildTemplate: CreateDb,
             constructInstance: builder => new SampleDbContext(
                 builder.Options,
-                _ => Enumerable.Empty<IValidator>()));
+                _ => new CachedValidators(new List<IValidator>(),false)));
     }
 
     static SqlInstance<SampleDbContext> sqlInstance;

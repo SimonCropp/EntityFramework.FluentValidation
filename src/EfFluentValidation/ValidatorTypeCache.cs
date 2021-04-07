@@ -9,47 +9,56 @@ namespace EfFluentValidation
 {
     public class ValidatorTypeCache
     {
-        ConcurrentDictionary<Type, IEnumerable<IValidator>> entityMapCache = new();
-        Dictionary<Type, List<IValidator>> instanceCache = new();
+        ConcurrentDictionary<Type, CachedValidators> entityMapCache = new();
+        Dictionary<Type, CachedValidators> instanceCache = new();
 
         public ValidatorTypeCache(IEnumerable<Result> scanResults)
         {
             foreach (var result in scanResults.GroupBy(x => x.InterfaceType.GenericTypeArguments.Single()))
             {
-                instanceCache[result.Key] = result
+                var validators = result
                     .Select(x => Activator.CreateInstance(x.ValidatorType))
                     .Cast<IValidator>()
                     .ToList();
+                var hasAsyncCondition = validators.Any(x => x.CreateDescriptor().Rules.Any(y => y.HasAsyncCondition));
+                instanceCache[result.Key] = new(validators, hasAsyncCondition);
             }
         }
 
-        public IEnumerable<IValidator> GetValidators(Type entityType)
+        public CachedValidators GetValidators(Type entityType)
         {
+            CachedValidators empty = new(new List<IValidator>(), false);
             return entityMapCache.GetOrAdd(entityType, x =>
             {
                 var list = FindValidatorsForEntity(x);
-                if (list.Any())
+                if (list.Validators.Any())
                 {
-                    return list;
+                    return new(list.Validators, list.HasAsyncCondition);
                 }
 
-                return Enumerable.Empty<IValidator>();
+                return empty;
             });
         }
 
-        List<IValidator> FindValidatorsForEntity(Type entityType)
+        CachedValidators FindValidatorsForEntity(Type entityType)
         {
             List<IValidator> list = new();
+            var hasAsyncCondition = false;
             foreach (var typeToValidators in instanceCache)
             {
                 var targetType = typeToValidators.Key;
-                var validators = typeToValidators.Value;
+                var cachedValidators = typeToValidators.Value;
                 if (targetType.IsAssignableFrom(entityType))
                 {
-                    list.AddRange(validators);
+                    if (cachedValidators.HasAsyncCondition)
+                    {
+                        hasAsyncCondition = true;
+                    }
+                    list.AddRange(cachedValidators.Validators);
                 }
             }
-            return list;
+
+            return new(list, hasAsyncCondition);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace EfFluentValidation
         /// </param>
         public static async Task<(bool isValid, IReadOnlyList<EntityValidationFailure> failures)> TryValidate(
                 DbContext dbContext,
-                Func<Type, IEnumerable<IValidator>> validatorFactory)
+                Func<Type, CachedValidators> validatorFactory)
 
             #endregion
 
@@ -36,7 +36,7 @@ namespace EfFluentValidation
             return (!entityFailures.Any(), entityFailures);
         }
 
-        static async IAsyncEnumerable<EntityValidationFailure> InnerVerify(DbContext dbContext, Func<Type, IEnumerable<IValidator>> validatorFactory)
+        static async IAsyncEnumerable<EntityValidationFailure> InnerVerify(DbContext dbContext, Func<Type, CachedValidators> validatorFactory)
         {
             static void AddFailures(List<TypeValidationFailure> failures, IEnumerable<ValidationFailure> errors, IValidator validator)
             {
@@ -48,10 +48,23 @@ namespace EfFluentValidation
                 List<TypeValidationFailure> validationFailures = new();
                 var clrType = entry.Metadata.ClrType;
                 var validationContext = BuildValidationContext(dbContext, entry);
-                foreach (var validator in validatorFactory(clrType))
+                var cachedValidators = validatorFactory(clrType);
+                if (cachedValidators.HasAsyncCondition)
                 {
-                    var result = await validator.ValidateEx(validationContext);
-                    AddFailures(validationFailures, result.Errors, validator);
+                    foreach (var validator in cachedValidators.Validators)
+                    {
+                        var result = await validator.ValidateAsync(validationContext);
+                        AddFailures(validationFailures, result.Errors, validator);
+                    }
+                }
+                else
+                {
+                    foreach (var validator in cachedValidators.Validators)
+                    {
+                        // ReSharper disable once MethodHasAsyncOverload
+                        var result = validator.Validate(validationContext);
+                        AddFailures(validationFailures, result.Errors, validator);
+                    }
                 }
 
                 if (validationFailures.Any())
@@ -66,12 +79,27 @@ namespace EfFluentValidation
                 var clrType = entry.Metadata.ClrType;
                 var validationContext = BuildValidationContext(dbContext, entry);
                 var changedProperties = entry.ChangedProperties().ToList();
-                foreach (var validator in validatorFactory(clrType))
+                var cachedValidators = validatorFactory(clrType);
+                if (cachedValidators.HasAsyncCondition)
                 {
-                    var result = await validator.ValidateEx(validationContext);
-                    var errors = result.Errors.Where(x => changedProperties.Contains(x.PropertyName));
+                    foreach (var validator in cachedValidators.Validators)
+                    {
+                        var result = await validator.ValidateAsync(validationContext);
+                        var errors = result.Errors.Where(x => changedProperties.Contains(x.PropertyName));
 
-                    AddFailures(validationFailures, errors, validator);
+                        AddFailures(validationFailures, errors, validator);
+                    }
+                }
+                else
+                {
+                    foreach (var validator in cachedValidators.Validators)
+                    {
+                        // ReSharper disable once MethodHasAsyncOverload
+                        var result = validator.Validate(validationContext);
+                        var errors = result.Errors.Where(x => changedProperties.Contains(x.PropertyName));
+
+                        AddFailures(validationFailures, errors, validator);
+                    }
                 }
 
                 if (validationFailures.Any())
@@ -105,7 +133,7 @@ namespace EfFluentValidation
         /// </param>
         public static async Task Validate(
                 DbContext dbContext,
-                Func<Type, IEnumerable<IValidator>> validatorFactory)
+                Func<Type, CachedValidators> validatorFactory)
 
             #endregion
 

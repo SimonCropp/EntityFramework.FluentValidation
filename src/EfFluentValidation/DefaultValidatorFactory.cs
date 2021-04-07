@@ -8,7 +8,7 @@ namespace EfFluentValidation
     public static class DefaultValidatorFactory<T>
         where T : DbContext
     {
-        public static Func<Type, IEnumerable<IValidator>> Factory { get; }
+        public static Func<Type, CachedValidators> Factory { get; }
 
         static DefaultValidatorFactory()
         {
@@ -16,6 +16,18 @@ namespace EfFluentValidation
 
             ValidatorTypeCache typeCache = new(validators);
             Factory = type => typeCache.GetValidators(type);
+        }
+    }
+
+    public class CachedValidators
+    {
+        public IReadOnlyList<IValidator> Validators { get; }
+        public bool HasAsyncCondition { get; }
+
+        public CachedValidators(IReadOnlyList<IValidator> validators, bool hasAsyncCondition)
+        {
+            Validators = validators;
+            HasAsyncCondition = hasAsyncCondition;
         }
     }
 }

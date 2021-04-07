@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using EfFluentValidation;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace Custom
@@ -13,13 +11,13 @@ namespace Custom
     public class SampleDbContext :
         DbContext
     {
-        Func<Type, IEnumerable<IValidator>> validatorFactory;
+        Func<Type, CachedValidators> validatorFactory;
         public DbSet<Employee> Employees { get; set; } = null!;
         public DbSet<Company> Companies { get; set; } = null!;
 
         public SampleDbContext(
             DbContextOptions options,
-            Func<Type, IEnumerable<IValidator>> validatorFactory) :
+            Func<Type, CachedValidators> validatorFactory) :
             base(options)
         {
             this.validatorFactory = validatorFactory;

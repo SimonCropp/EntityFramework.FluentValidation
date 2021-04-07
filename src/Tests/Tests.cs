@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using EfFluentValidation;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using VerifyXunit;
 using Xunit;
@@ -12,7 +10,7 @@ using Xunit;
 [UsesVerify]
 public class Tests
 {
-    static Func<Type, IEnumerable<IValidator>> factory = DefaultValidatorFactory<SampleDbContext>.Factory;
+    static Func<Type, CachedValidators> factory = DefaultValidatorFactory<SampleDbContext>.Factory;
 
     [Fact]
     public async Task InValidInterface()
@@ -118,7 +116,7 @@ public class Tests
 
         #endregion
 
-        return Verifier.Verify(validators.ToList().Select(x => x.GetType()));
+        return Verifier.Verify(validators.Validators.ToList().Select(x => x.GetType()));
     }
 
     [Fact]

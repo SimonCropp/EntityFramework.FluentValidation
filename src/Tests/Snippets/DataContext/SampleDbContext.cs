@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using EfFluentValidation;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 public class SampleDbContext :
@@ -12,7 +10,7 @@ public class SampleDbContext :
 
     public SampleDbContext(
         DbContextOptions options,
-        Func<Type, IEnumerable<IValidator>> validatorFactory) :
+        Func<Type, CachedValidators> validatorFactory) :
         base(options, validatorFactory)
     {
     }

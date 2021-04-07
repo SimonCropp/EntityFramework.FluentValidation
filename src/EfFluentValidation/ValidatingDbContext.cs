@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfFluentValidation
@@ -10,10 +8,10 @@ namespace EfFluentValidation
     public abstract class ValidatingDbContext :
         DbContext
     {
-        Func<Type, IEnumerable<IValidator>> validatorFactory;
+        Func<Type, CachedValidators> validatorFactory;
 
         protected ValidatingDbContext(
-            Func<Type, IEnumerable<IValidator>> validatorFactory)
+            Func<Type, CachedValidators> validatorFactory)
         {
             Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
             this.validatorFactory = validatorFactory;
@@ -21,7 +19,7 @@ namespace EfFluentValidation
 
         protected ValidatingDbContext(
             DbContextOptions options,
-            Func<Type, IEnumerable<IValidator>> validatorFactory) :
+            Func<Type, CachedValidators> validatorFactory) :
             base(options)
         {
             Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
