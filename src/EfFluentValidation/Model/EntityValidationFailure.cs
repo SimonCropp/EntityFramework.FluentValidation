@@ -11,9 +11,6 @@ namespace EfFluentValidation
 
         public EntityValidationFailure(object entity,Type entityType, IReadOnlyList<TypeValidationFailure> failures)
         {
-            Guard.AgainstNull(entity, nameof(entity));
-            Guard.AgainstNull(entityType, nameof(entityType));
-            Guard.AgainstNull(failures, nameof(failures));
             Entity = entity;
             EntityType = entityType;
             Failures = failures;

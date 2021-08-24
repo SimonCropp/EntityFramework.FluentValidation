@@ -14,8 +14,6 @@ namespace EfFluentValidation
 
         public EfContext(DbContext dbContext, EntityEntry entityEntry)
         {
-            Guard.AgainstNull(dbContext, nameof(dbContext));
-            Guard.AgainstNull(entityEntry, nameof(entityEntry));
             DbContext = dbContext;
             EntityEntry = entityEntry;
         }

@@ -30,8 +30,6 @@ namespace EfFluentValidation
             #endregion
 
         {
-            Guard.AgainstNull(dbContext, nameof(dbContext));
-            Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
             var entityFailures = await InnerVerify(dbContext, validatorFactory).ToAsyncList();
             return (!entityFailures.Any(), entityFailures);
         }

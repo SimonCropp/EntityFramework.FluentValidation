@@ -13,7 +13,6 @@ namespace EfFluentValidation
         protected ValidatingDbContext(
             Func<Type, CachedValidators> validatorFactory)
         {
-            Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
             this.validatorFactory = validatorFactory;
         }
 
@@ -22,7 +21,6 @@ namespace EfFluentValidation
             Func<Type, CachedValidators> validatorFactory) :
             base(options)
         {
-            Guard.AgainstNull(validatorFactory, nameof(validatorFactory));
             this.validatorFactory = validatorFactory;
         }
 

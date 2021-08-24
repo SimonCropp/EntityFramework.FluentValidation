@@ -21,7 +21,6 @@ namespace EfFluentValidation
             bool throwForNonPublicValidators = true,
             bool throwForNoValidatorsFound = true)
         {
-            Guard.AgainstNull(type, nameof(type));
             return FromAssembly(type.GetTypeInfo().Assembly, throwForNonPublicValidators, throwForNoValidatorsFound);
         }
 
@@ -30,7 +29,6 @@ namespace EfFluentValidation
             bool throwForNonPublicValidators = true,
             bool throwForNoValidatorsFound = true)
         {
-            Guard.AgainstNull(assembly, nameof(assembly));
             var assemblyName = assembly.GetName().Name;
             if (throwForNonPublicValidators)
             {

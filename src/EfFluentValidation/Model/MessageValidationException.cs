@@ -9,7 +9,6 @@ namespace EfFluentValidation
     {
         public EntityValidationException(IReadOnlyList<EntityValidationFailure> errors)
         {
-            Guard.AgainstNull(errors, nameof(errors));
             Errors = errors;
         }
 
